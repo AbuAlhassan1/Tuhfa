@@ -16,33 +16,29 @@ admin = get_user_model()
     400: MessageOut,
     201: AdminOut,
 })
-def signup(request, account_in: AdminCreate):
-    print("qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq")
-    if account_in.password1 != account_in.password2:
+def signup(request, full_name, email, phone, password1, password2):
+    if password1 != password2:
         return 400, {
             'detail': 'Passwords do not match !',
         }
 
     try:
-        print("eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee")
-        admin.objects.get(email=account_in.email)
+        is_admin_exists = AdminUser.objects.get(email=email)
         
-    except admin.DoesNotExist:
-        print("hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh")
-        new_admin = AdminUser.objects.create(
-            full_name=account_in.full_name,
-            email=account_in.email,
-            phone=account_in.phone,
-            password=account_in.password1
+    except AdminUser.DoesNotExist:
+        print("dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd")
+        new_admin = AdminUser.objects.create_user(
+            full_name=full_name,
+            email=email,
+            phone=phone,
+            password=password1
         )
 
         token = get_user_token(new_admin)
-        print("ggggggggggggggggggggggggggggggggg")
         return 201, {
             'token': token,
             'admin': new_admin,
         }
-    print("ssssssssssssssssssssssssssssssssssss")
     return 400, {
         'detail': 'Email already exists !',
     }

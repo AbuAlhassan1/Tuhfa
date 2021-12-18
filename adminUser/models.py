@@ -2,6 +2,10 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser, UserManager
 
 class AdminManager(UserManager):
+    # def get_by_natural_key(self, email):
+    #     case_insensitive_username_field = '{}__iexact'.format(self.model.USERNAME_FIELD)
+    #     return self.get(**{case_insensitive_username_field: email})
+
     def create_user(self, full_name, email, password, phone):
         if not email:
             raise ValueError("Users must have an email address")
