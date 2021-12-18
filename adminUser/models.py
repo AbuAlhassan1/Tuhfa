@@ -38,6 +38,7 @@ class AdminUser(AbstractUser, models.Model):
     full_name = models.CharField(max_length=50, null=True, blank=True)
     email = models.EmailField(unique=True)
     phone = models.DecimalField(max_digits=11, decimal_places=0, null=True, blank=True)
+    username = None
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []

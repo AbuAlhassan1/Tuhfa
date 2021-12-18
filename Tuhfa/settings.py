@@ -134,4 +134,3 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 DATETIME_FORMAT = '%Y-%m-%d %H:%M'
 DATEINPUT_FORMAT = '%Y-%m-%d %H:%M'
 AUTH_USER_MODEL = 'adminUser.AdminUser'
-

@@ -76,12 +76,12 @@ class AdminCreate(Schema):
     password2: str
 
 class AdminOut(Schema):
-    full_name: str
+    full_name: str = None
     email: EmailStr
-    phone: str
+    phone: str = None
 
 class TokenOut(Schema):
-    token: str
+    access: str
 
 class AuthOut(Schema):
     token: TokenOut

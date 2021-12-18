@@ -1,6 +1,7 @@
+from typing import List
 from django.shortcuts import get_object_or_404, render
 from django.contrib.auth import authenticate, get_user_model
-from Tuhfa.utils.schemas import MessageOut, AdminCreate, AdminOut, AuthOut, SignIn, AdminUpdate, UpdatePassword
+from Tuhfa.utils.schemas import MessageOut, AdminCreate, AdminOut, AuthOut, SignIn, AdminUpdate, UpdatePassword, TokenOut, AuthOut
 from ninja import Router
 from .authorization import GlobalAuth, get_user_token
 from .models import AdminUser
@@ -14,7 +15,7 @@ admin = get_user_model()
 # SignUp Operation --Start--
 @admin_controller.post('signup', response={
     400: MessageOut,
-    201: AdminOut,
+    201: AuthOut
 })
 def signup(request, full_name, email, phone, password1, password2):
     if password1 != password2:
@@ -26,18 +27,17 @@ def signup(request, full_name, email, phone, password1, password2):
         is_admin_exists = AdminUser.objects.get(email=email)
         
     except AdminUser.DoesNotExist:
-        print("dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd")
         new_admin = AdminUser.objects.create_user(
             full_name=full_name,
             email=email,
             phone=phone,
             password=password1
         )
-
         token = get_user_token(new_admin)
+        print("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa  " + str(token))
         return 201, {
             'token': token,
-            'admin': new_admin,
+            'admin': new_admin
         }
     return 400, {
         'detail': 'Email already exists !',
@@ -46,7 +46,10 @@ def signup(request, full_name, email, phone, password1, password2):
 # ---------------------------------------------------------------
 
 # SignIn Operation --Start--
-@admin_controller.post('signin')
+@admin_controller.post('signin', response={
+    200: AuthOut,
+    404: MessageOut
+})
 def signin(request, log_in: SignIn):
     admin = authenticate(
         email=log_in.email,
@@ -55,7 +58,7 @@ def signin(request, log_in: SignIn):
 
     if not admin:
         return 404, {
-            'detail': 'User Does Not Exist !'
+            'message': 'User Does Not Exist !'
         }
 
     token = get_user_token(admin)
