@@ -14,9 +14,9 @@ posts_controller = Router(tags=['posts'])
     200: PostOut,
     400: MessageOut
 })
-def create_post(request, input: PostSchema):
+def create_post(request, title, description, image):
     try:
-        post = Post.objects.create(**input.dict())
+        post = Post.objects.create(title=title, description=description, image=image)
     except:
         return 400, {'message': 'Error Creating Post'}
     return 200, post
@@ -31,5 +31,20 @@ def create_post(request, input: PostSchema):
 def get_all_posts(request):
     posts = Post.objects.all()
     return 200, posts
+
+# ---------------------------------------------------------------
+
+# Delete A Post
+@posts_controller.delete('delete_post/{id}', response={
+    200: MessageOut,
+    404: MessageOut
+})
+def delete_post(request, id):
+    try:
+        post = Post.objects.get(id=id)
+    except:
+        return 404, {'message': 'Post Not Found'}
+    post.delete()
+    return 200, {'message': 'Post Deleted'}
 
 # ---------------------------------------------------------------

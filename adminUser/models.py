@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser, UserManager
 
-class adminManager(UserManager):
+class AdminManager(UserManager):
     def create_user(self, full_name, email, password, phone):
         if not email:
             raise ValueError("Users must have an email address")
@@ -38,7 +38,7 @@ class AdminUser(AbstractUser, models.Model):
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
 
-    objects = adminManager()
+    objects = AdminManager()
     
     def __str__(self):
         return str(self.full_name) + " [ " + str(self.email) + " ]"

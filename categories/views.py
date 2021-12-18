@@ -7,6 +7,8 @@ from Tuhfa.utils.schemas import CategoryIn, MessageOut, CategoryOut, ThemeOut, T
 
 categories_controller = Router(tags=['categories'])
 
+# ---------------------------------------------------------------
+
 # Create Category
 @categories_controller.post('create_category', response={
     201: CategoryOut,
@@ -16,7 +18,7 @@ def create_category(request, input: CategoryIn):
     try:
         categories = Category.objects.create(**input.dict())
     except:
-        return 500, { 'message': 'Bad Request' }
+        return 500, { 'message': 'Something Went Rong !! :(' }
 
     return 201, categories
 
@@ -28,6 +30,7 @@ def create_category(request, input: CategoryIn):
 })
 def retrive_category_by_id(request, id):
     categories = get_object_or_404(Category, id=id)
+    # categories = Category.objects.select_related().get(id=id) # For Testing Purpose !!!
     return categories
 
 # ---------------------------------------------------------------
@@ -51,8 +54,8 @@ def update_category_by_id(request, id, input: CategoryIn):
     category = get_object_or_404(Category, id=id)
     category.name = input.name
     category.description = input.description
-    if category.id != input.parent_id:
-        category.parent_id = input.parent_id
+    if category.id != input.parent:
+        category.parent = input.parent
     else:
         return 500, { 'message': "You Can't Assign The ParentId To It Self !!" }
     

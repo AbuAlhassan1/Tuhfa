@@ -1,23 +1,15 @@
 from ninja import Schema
 import datetime
 
+from pydantic import EmailStr, Field
+
 class CategoryIn(Schema):
     name: str
     description: str
     parent: int = None
 
-
 class MessageOut(Schema):
     message: str
-
-class UserCreate(Schema):
-    full_name: str
-    email: str
-    phone: int
-    category: int
-    theme: int
-
-
 
 class ThemeIn(Schema):
     name: str
@@ -29,7 +21,7 @@ class ThemeIn(Schema):
 class CategorySchema(Schema):
     name: str
     description: str
-    parent: int = None
+    # parent: int = None
 
 class CategoryOut(Schema):
     name: str
@@ -50,13 +42,19 @@ class ThemeSchema(Schema):
     category: CategoryOut
     date: datetime.datetime
 
+class UserCreate(Schema):
+    full_name: str
+    email: str
+    phone: int
+    category: CategoryIn = None
+    theme: ThemeSchema = None
 
 class UserOut(Schema):
     full_name: str
     email: str
     phone: int
-    category: CategorySchema
-    theme: ThemeSchema
+    category: CategoryIn = None
+    theme: ThemeSchema = None
 
 class PostSchema(Schema):
     title: str
@@ -69,3 +67,36 @@ class PostOut(Schema):
     image: str
     created_on: datetime.datetime
     updated_on: datetime.datetime
+
+class AdminCreate(Schema):
+    full_name: str
+    email: EmailStr
+    phone: int
+    password1: str
+    password2: str
+
+class AdminOut(Schema):
+    full_name: str
+    email: EmailStr
+    phone: str
+
+class TokenOut(Schema):
+    token: str
+
+class AuthOut(Schema):
+    token: TokenOut
+    admin: AdminOut
+
+class SignIn(Schema):
+    email: EmailStr
+    password: str
+
+class AdminUpdate(Schema):
+    full_name: str
+    email: EmailStr
+    phone: str = Field(max_length=11, min_length=11)
+
+class UpdatePassword(Schema):
+    old_password: str
+    password1: str
+    password2: str

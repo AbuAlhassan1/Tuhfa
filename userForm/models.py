@@ -9,4 +9,4 @@ class UserForm(models.Model):
     theme = models.ForeignKey(Theme, on_delete=models.DO_NOTHING, default=None)
 
     def __str__(self):
-        return self.full_name
+        return f"{self.full_name} || {str(self.id)}"

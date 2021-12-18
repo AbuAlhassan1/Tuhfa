@@ -11,7 +11,7 @@ userForm_controller = Router(tags=['userForm'])
 # ---------------------------------------------------------------
 
 # Create User From --start--
-@userForm_controller.post('user', response={
+@userForm_controller.post('create-user-form', response={
     201: UserOut,
     400: MessageOut
 })
@@ -32,7 +32,7 @@ def create_user_form(request, categoryId, themeId, fullname, email, phone):
 # ---------------------------------------------------------------
 
 # Get UserForm By Id --start--
-@userForm_controller.get('user/{id}', response={
+@userForm_controller.get('get-user-form-by-id/{id}', response={
     200: UserOut,
     404: MessageOut
 })
@@ -47,7 +47,7 @@ def get_user_form_by_id(request, id):
 # ---------------------------------------------------------------
 
 # Get All UserForm --start--
-@userForm_controller.get('user', response={
+@userForm_controller.get('get-all-user-forms', response={
     200: List[UserOut],
     404: MessageOut
 })
@@ -62,19 +62,27 @@ def get_all_user_forms(request):
 # ---------------------------------------------------------------
 
 # Update UserForm By Id --start--
-@userForm_controller.put('user/{id}', response={
+@userForm_controller.put('update-user-form-by-id/{id}', response={
     200: UserCreate,
     404: MessageOut
 })
-def update_user_form(request, id, input: UserCreate):
+def update_user_form(request, FormId, categoryId, themeId, full_name, email, phone):
     try:
-        user = UserForm.objects.get(id=id)
+        category = get_object_or_404(Category, id= categoryId)
+        theme = get_object_or_404(Theme, id= themeId)
+    except:
+        return 404, {'message': 'Category or Theme or Art not found'}
+
+    try:
+        user = UserForm.objects.get(id=FormId)
     except:
         return 404, { 'message': 'User Not Found !!!' }
 
-    user.full_name = input.full_name
-    user.email = input.email
-    user.phone = input.phone
+    user.full_name = full_name
+    user.email = email
+    user.phone = phone
+    user.category = category
+    user.theme = theme
     user.save()
 
     return 200, user
@@ -82,7 +90,7 @@ def update_user_form(request, id, input: UserCreate):
 # ---------------------------------------------------------------
 
 # Delete UserForm By Id --start--
-@userForm_controller.delete('user/{id}', response={
+@userForm_controller.delete('delete-user-form-by-id/{id}', response={
     200: MessageOut,
     404: MessageOut
 })
