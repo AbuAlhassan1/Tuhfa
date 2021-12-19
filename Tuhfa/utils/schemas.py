@@ -91,10 +91,10 @@ class SignIn(Schema):
     email: EmailStr
     password: str
 
-class AdminUpdate(Schema):
-    full_name: str
-    email: EmailStr
-    phone: str = Field(max_length=11, min_length=11)
+# class AdminUpdate(Schema):
+#     full_name: str
+#     email: EmailStr
+#     phone: int
 
 class UpdatePassword(Schema):
     old_password: str

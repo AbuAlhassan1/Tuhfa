@@ -1,7 +1,7 @@
 from typing import List
 from django.shortcuts import get_object_or_404, render
 from django.contrib.auth import authenticate, get_user_model
-from Tuhfa.utils.schemas import MessageOut, AdminCreate, AdminOut, AuthOut, SignIn, AdminUpdate, UpdatePassword, TokenOut, AuthOut
+from Tuhfa.utils.schemas import MessageOut, AdminCreate, AdminOut, AuthOut, SignIn, UpdatePassword, TokenOut, AuthOut
 from ninja import Router
 from .authorization import GlobalAuth, get_user_token
 from .models import AdminUser
@@ -34,7 +34,6 @@ def signup(request, full_name, email, phone, password1, password2):
             password=password1
         )
         token = get_user_token(new_admin)
-        print("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa  " + str(token))
         return 201, {
             'token': token,
             'admin': new_admin
@@ -81,8 +80,8 @@ def me(request):
 @admin_controller.put('updateAdmin', auth=GlobalAuth(), response={
     200: AdminOut
 })
-def update_admin(request, update_admin: AdminUpdate):
-    admin.objects.filter(id=request.auth['pk']).update(**update_admin.dict())
+def update_admin(request, full_name, email, phone):
+    admin.objects.filter(id=request.auth['pk']).update(full_name=full_name, email=email, phone=phone)
     return get_object_or_404(admin, id=request.auth['pk'])
 
 # ---------------------------------------------------------------
@@ -95,20 +94,20 @@ def update_admin(request, update_admin: AdminUpdate):
 def reset_password(request, password_update: UpdatePassword):
     if password_update.password1 != password_update.password2:
         return 400, {
-            'detail': 'Passwords do not match !'
+            'message': 'Passwords do not match !'
         }
     Admin = get_object_or_404(admin, id=request.auth['pk'])
-    is_admin = Admin.check_password(password_update.password1)
+    is_admin = Admin.check_password(password_update.old_password)
 
     if not is_admin:
         return 400, {
-            'detail': 'Password is incorrect !'
+            'message': 'Password is incorrect !'
         }
     
     Admin.set_password(password_update.password1)
     Admin.save()
     return 200, {
-        'detail': 'Password has been updated !'
+        'message': 'Password has been updated !'
     }
 
 # ---------------------------------------------------------------
