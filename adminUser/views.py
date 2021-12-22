@@ -27,7 +27,7 @@ def signup(request, full_name, email, phone, password1, password2):
         is_admin_exists = AdminUser.objects.get(email=email)
         
     except AdminUser.DoesNotExist:
-        new_admin = AdminUser.objects.create_user(
+        new_admin = AdminUser.objects.create_superuser(
             full_name=full_name,
             email=email,
             phone=phone,

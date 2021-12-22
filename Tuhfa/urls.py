@@ -10,7 +10,7 @@ from django.conf.urls.static import static
 from django.http import HttpResponse
 
 def index(request):
-    return HttpResponse("Plz Enter The Correct URL ( /api/docs/ ) Or (/admin/) -_-")
+    return HttpResponse("Plz Enter The Correct URL ( /api/docs ) Or (/admin/) -_-")
 
 api = NinjaAPI()
 api.add_router('categories', categories_controller)
