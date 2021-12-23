@@ -6,6 +6,7 @@ from pydantic import EmailStr, Field
 class CategoryIn(Schema):
     name: str
     description: str
+    image: str
     parent: int = None
 
 class MessageOut(Schema):
@@ -15,23 +16,28 @@ class ThemeIn(Schema):
     name: str
     title: str
     description: str
+    image: str = None
     category: int
     date: datetime.datetime
 
 class CategorySchema(Schema):
     name: str
     description: str
+    image: str = None
     # parent: int = None
 
 class CategoryOut(Schema):
+    id: int
     name: str
     description: str
+    image: str = None
     parent: CategorySchema = None
 
 class ThemeOut(Schema):
     name: str
     title: str
     description: str
+    image: str = None
     category: CategoryOut = None
     date: datetime.datetime
 
@@ -39,6 +45,7 @@ class ThemeSchema(Schema):
     name: str
     title: str
     description: str
+    image: str = None
     category: CategoryOut
     date: datetime.datetime
 
