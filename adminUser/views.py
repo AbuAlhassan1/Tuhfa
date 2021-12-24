@@ -20,7 +20,7 @@ admin = get_user_model()
 def signup(request, full_name, email, phone, password1, password2):
     if password1 != password2:
         return 400, {
-            'detail': 'Passwords do not match !',
+            'message': 'Passwords do not match !',
         }
 
     try:
@@ -39,7 +39,7 @@ def signup(request, full_name, email, phone, password1, password2):
             'admin': new_admin
         }
     return 400, {
-        'detail': 'Email already exists !',
+        'message': 'Email already exists !',
     }
 
 # ---------------------------------------------------------------

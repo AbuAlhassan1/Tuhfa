@@ -3,6 +3,7 @@ from django.shortcuts import render
 from ninja import Router
 from .models import Post
 from Tuhfa.utils.schemas import PostSchema, MessageOut, PostOut
+from ninja.files import UploadedFile
 
 posts_controller = Router(tags=['posts'])
 
@@ -14,7 +15,7 @@ posts_controller = Router(tags=['posts'])
     200: PostOut,
     400: MessageOut
 })
-def create_post(request, title, description, image):
+def create_post(request, title: str, description: str, image: UploadedFile):
     try:
         post = Post.objects.create(title=title, description=description, image=image)
     except:
