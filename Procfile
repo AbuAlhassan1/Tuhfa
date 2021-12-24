@@ -1,1 +1,0 @@
-web: gunicorn Tuhfa.wsgi --log-file -
