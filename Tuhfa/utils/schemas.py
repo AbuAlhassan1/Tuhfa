@@ -1,12 +1,12 @@
 from ninja import Schema
 import datetime
+from ninja.files import UploadedFile
 
 from pydantic import EmailStr, Field
 
 class CategoryIn(Schema):
     name: str
     description: str
-    image: str
     parent: int = None
 
 class MessageOut(Schema):

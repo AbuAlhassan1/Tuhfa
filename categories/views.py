@@ -2,8 +2,10 @@ from django.shortcuts import get_object_or_404, render
 from typing import List
 import datetime
 from ninja import Router
+from pydantic.types import FilePath
 from .models import Category, Theme
 from Tuhfa.utils.schemas import CategoryIn, MessageOut, CategoryOut, ThemeOut, ThemeIn
+from ninja.files import UploadedFile
 
 categories_controller = Router(tags=['categories'])
 
@@ -14,14 +16,16 @@ categories_controller = Router(tags=['categories'])
     201: CategoryOut,
     500: MessageOut
 })
-def create_category(request, input: CategoryIn):
+def create_category(request, name:str, description: str, parent: int = None, image: UploadedFile = None):
     try:
-        categories = Category.objects.create(**input.dict())
+        categories = Category.objects.create(name=name, description=description, parent=parent, image=image)
     except:
         return 500, { 'message': 'Something Went Rong !! :(' }
 
     return 201, categories
 
+# endpoint consumes file
+ 
 # ---------------------------------------------------------------
 
 # Retrive Category By Id
