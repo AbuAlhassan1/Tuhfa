@@ -3,7 +3,7 @@ from django.shortcuts import get_object_or_404, render
 from ninja import Router
 from .models import UserForm
 from categories.models import Category, Theme
-from Tuhfa.utils.schemas import CategorySchema, ThemeSchema, UserCreate, MessageOut, UserOut
+from Tuhfa.utils.schemas import UserCreate, MessageOut, UserOut
 
 userForm_controller = Router(tags=['userForm'])
 
@@ -62,7 +62,7 @@ def get_all_user_forms(request):
 # ---------------------------------------------------------------
 
 # Update UserForm By Id --start--
-@userForm_controller.put('update-user-form-by-id/{id}', response={
+@userForm_controller.put('update-user-form-by-id', response={
     200: UserCreate,
     404: MessageOut
 })

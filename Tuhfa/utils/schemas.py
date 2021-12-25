@@ -4,42 +4,52 @@ from ninja.files import UploadedFile
 
 from pydantic import EmailStr, Field
 
+class MessageOut(Schema):
+    message: str
+
+# ---------------------------------------------------------------
+
+# Category Schemas
 class CategoryIn(Schema):
     name: str
     description: str
     parent: int = None
 
-class MessageOut(Schema):
-    message: str
 
-class ThemeIn(Schema):
-    name: str
-    title: str
-    description: str
-    image: str = None
-    category: int
-    date: datetime.datetime
-
-class CategorySchema(Schema):
-    name: str
-    description: str
-    image: str = None
-    # parent: int = None
+# class CategorySchema(Schema):
+#     name: str
+#     description: str
+#     image: str = None
+#     # parent: int = None
 
 class CategoryOut(Schema):
     id: int
     name: str
     description: str
     image: str = None
-    parent: CategorySchema = None
+    parent: int
+# ---------------------------------------------------------------
+
+# Theme Schemas
+class ThemeCategorySchema(Schema):
+    id: int
+    name: str
+
+class ThemeIn(Schema):
+    name: str
+    title: str
+    description: str
+    image: str = None
+    date: datetime.datetime
+    category: int
 
 class ThemeOut(Schema):
     name: str
     title: str
     description: str
     image: str = None
-    category: CategoryOut = None
     date: datetime.datetime
+    category: ThemeCategorySchema = None
 
 class ThemeSchema(Schema):
     name: str
@@ -49,6 +59,7 @@ class ThemeSchema(Schema):
     category: CategoryOut
     date: datetime.datetime
 
+# ---------------------------------------------------------------
 class UserCreate(Schema):
     full_name: str
     email: str
@@ -97,11 +108,6 @@ class AuthOut(Schema):
 class SignIn(Schema):
     email: EmailStr
     password: str
-
-# class AdminUpdate(Schema):
-#     full_name: str
-#     email: EmailStr
-#     phone: int
 
 class UpdatePassword(Schema):
     old_password: str

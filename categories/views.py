@@ -127,8 +127,8 @@ def get_theme_by_id(request, id):
     200: List[ThemeOut],
     404: MessageOut
 })
-def get_themes_by_date(request, date: datetime.datetime):
-    themes = Theme.objects.filter(date=date)
+def get_themes_by_date(request, date: str):
+    themes = Theme.objects.filter(date__icontains=date)
     if not themes:
         return 404, { 'message': 'No Themes Found' }
     return themes
