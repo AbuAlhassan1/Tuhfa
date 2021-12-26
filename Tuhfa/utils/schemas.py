@@ -1,4 +1,4 @@
-from ninja import Schema
+from ninja import Schema, schema
 import datetime
 from ninja.files import UploadedFile
 
@@ -113,3 +113,38 @@ class UpdatePassword(Schema):
     old_password: str
     password1: str
     password2: str
+
+# ---------------------------------------------------------------
+
+# About Schemas
+class AboutOut(Schema):
+    image: str
+    description: str
+    created: datetime.date
+    updated: datetime.date
+
+# ---------------------------------------------------------------
+
+# Schedule Schemas
+class ScheduleOut(Schema):
+    id: int
+    Sunday: str
+    Monday: str
+    Tuesday: str
+    Wednesday: str
+    Thursday: str
+    Friday: str
+    Saturday: str
+    created: datetime.date
+    updated: datetime.datetime
+
+class ScheduleIn(Schema):
+    Sunday: str
+    Monday: str
+    Tuesday: str
+    Wednesday: str
+    Thursday: str
+    Friday: str
+    Saturday: str
+
+# ---------------------------------------------------------------

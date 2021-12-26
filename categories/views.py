@@ -4,7 +4,7 @@ import datetime
 from ninja import Router
 from pydantic.types import FilePath
 from .models import Category, Theme
-from Tuhfa.utils.schemas import CategoryIn, MessageOut, CategoryOut, ThemeOut, ThemeIn
+from Tuhfa.utils.schemas import CategoryIn, MessageOut, CategoryOut, ThemeOut
 from ninja.files import UploadedFile
 
 categories_controller = Router(tags=['categories'])

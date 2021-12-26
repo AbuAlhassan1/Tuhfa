@@ -43,6 +43,8 @@ INSTALLED_APPS = [
     'posts',
     'ckeditor',
     'adminUser',
+    'about',
+    'schedule',
 ]
 
 MIDDLEWARE = [
