@@ -1,13 +1,11 @@
 from django.db import models
 
+from categories.models import Category
+
 class Schedule(models.Model):
-    Sunday = models.TextField(blank=True, null=True, default=None)
-    Monday = models.TextField(blank=True, null=True, default=None)
-    Tuesday = models.TextField(blank=True, null=True, default=None)
-    Wednesday = models.TextField(blank=True, null=True, default=None)
-    Thursday = models.TextField(blank=True, null=True, default=None)
-    Friday = models.TextField(blank=True, null=True, default=None)
-    Saturday = models.TextField(blank=True, null=True, default=None)
+    day = models.TextField(max_length=10, null=True, blank=True, default="dayName")
+    category = models.ForeignKey(Category, on_delete=models.DO_NOTHING, related_name="schedule_category", null=True, blank=True)
+    date = models.DateField(auto_now=False, auto_now_add=False)
 
     created = models.DateField(auto_now_add=True, auto_now=False)
     updated = models.DateTimeField(auto_now_add=False, auto_now=True)

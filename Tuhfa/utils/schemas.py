@@ -118,7 +118,7 @@ class UpdatePassword(Schema):
 
 # About Schemas
 class AboutOut(Schema):
-    image: str
+    image: str = None
     description: str
     created: datetime.date
     updated: datetime.date
@@ -126,25 +126,15 @@ class AboutOut(Schema):
 # ---------------------------------------------------------------
 
 # Schedule Schemas
+class ScheduleCategorySchema(Schema):
+    id: int
+    name: str
+
 class ScheduleOut(Schema):
     id: int
-    Sunday: str
-    Monday: str
-    Tuesday: str
-    Wednesday: str
-    Thursday: str
-    Friday: str
-    Saturday: str
+    day: str
+    category: ScheduleCategorySchema
     created: datetime.date
     updated: datetime.datetime
-
-class ScheduleIn(Schema):
-    Sunday: str
-    Monday: str
-    Tuesday: str
-    Wednesday: str
-    Thursday: str
-    Friday: str
-    Saturday: str
 
 # ---------------------------------------------------------------

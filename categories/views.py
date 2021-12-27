@@ -54,10 +54,11 @@ def retrive_all_categories(request):
     200: CategoryOut,
     500: MessageOut
 })
-def update_category_by_id(request, id, input: CategoryIn):
+def update_category_by_id(request, id, input: CategoryIn, image: UploadedFile = None):
     category = get_object_or_404(Category, id=id)
     category.name = input.name
     category.description = input.description
+    # category.image = image
     if category.id != input.parent:
         category.parent = input.parent
     else:

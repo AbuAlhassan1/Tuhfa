@@ -1,3 +1,4 @@
+from typing import List
 from django.shortcuts import render
 from ninja import Router
 from ninja.files import UploadedFile
@@ -35,38 +36,37 @@ def create_about_info(request, image: UploadedFile, description: str):
 
 # Retrieve An About Section
 @about_controller.get("retrive-about-section", response={
-    200: AboutOut,
+    200: List[AboutOut],
     404: MessageOut
 })
 def retrive_about_section(request):
     try:
-        about_info = About.objects.get(id=1)
+        about_info = About.objects.all()
     except:
         return {"message": "There is no about section yet"}
 
-    return 200, about_info
+    return about_info
 
 # ---------------------------------------------------------------
 
 # Update An About Section
 @about_controller.put("update-about-section", response={
-    "200": AboutOut,
-    "404": MessageOut
+    200: AboutOut,
+    404: MessageOut
 })
-def update_about_section(request, image: UploadedFile, description: str):
-    try:
-        about_info = About.objects.get(id=1)
-    except:
-        return {"message": "There is no about section yet"}
+def update_about_section(request,description: str, id: int, image: UploadedFile):
+    # image = ImageForm(request.POST, request.FILES)
 
     try:
-        about_info.image = image
-        about_info.description = description
-        about_info.save()
+        update_about_info = About.objects.filter(id=id).update(description=description, image=image)
     except:
         return {"message": "Somthing Went Wrong While Updating About Section !!!"}
 
-    return 200, about_info
-
+    if update_about_info:
+        about_info = About.objects.get(id=id)
+        return 200, about_info
+    else:
+        return {"message": "Somthing Went Wrong While Updating About Section !!!"}
+    
 
 # ---------------------------------------------------------------

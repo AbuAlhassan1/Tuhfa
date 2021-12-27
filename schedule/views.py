@@ -1,7 +1,8 @@
 from typing import List
 from django.shortcuts import render
 from ninja import Router
-from Tuhfa.utils.schemas import MessageOut, ScheduleIn, ScheduleOut
+from Tuhfa.utils.schemas import MessageOut, ScheduleOut
+from categories.models import Category
 from .models import Schedule
 import datetime
 
@@ -13,44 +14,58 @@ schedule_controller = Router(tags=['schedule'])
 @schedule_controller.post('create', response={
     201: ScheduleOut,
     400: MessageOut,
+    404: MessageOut,
     200: MessageOut,
     500: MessageOut,
     409: MessageOut
 })
 def create_schedule(request,
-    Sunday: str = None,
-    Monday: str = None,
-    Tuesday: str = None,
-    Wednesday: str = None,
-    Thursday: str = None,
-    Friday: str = None,
-    Saturday: str = None
+    day: str = None,
+    date: datetime.date = None,
+    category_id: int = None,
+    category_name: str = None,
 ):
 
-    is_admin_create_any_schedule_today = Schedule.objects.filter(created__date=datetime.date.today())
-    # Schedule.objects.raw('SELECT * FROM Schedule WHERE created=%s', [datetime.date.today()])
+    # is_admin_create_any_schedule_today = Schedule.objects.filter(created__icontains=datetime.date.today())
 
-    if not is_admin_create_any_schedule_today:
+    # if not is_admin_create_any_schedule_today:
+
+    if category_id:
         try:
-            schedule = Schedule.objects.create(
-                Sunday=Sunday,
-                Monday=Monday,
-                Tuesday=Tuesday,
-                Wednesday=Wednesday,
-                Thursday=Thursday,
-                Friday=Friday,
-                Saturday=Saturday
-            )
+            get_category_by_id = Category.objects.get(id=category_id)
+        except:
+            return 404, {
+                'message': 'Thir Is No Category With This ID'
+            }
+    if category_name:
+        try:
+            get_category_by_name = Category.objects.filter(name__icontains=category_name)
+        except:
+            return 404, {
+                'message': 'Thir Is No Category With This Name'
+            }
+
+    if category_id and category_name:
+        return {
+            'message': 'You Can Not Use Category ID And Category Name At The Same Time'
+        }
+
+    if category_id and not category_name:
+        try:
+            schedule = Schedule.objects.create(day=day, date=date, category=get_category_by_id)
+        except:
+            return {
+                'message': 'Somthing Went Wrong',
+            }
+    if category_name and not category_id:
+        try:
+            schedule = Schedule.objects.create(day=day, date=date, category=get_category_by_name[0])
         except:
             return {
                 'message': 'Somthing Went Wrong !!!',
             }
 
-        return 201, schedule
-    else:
-        return 200,{
-            'message': 'You Can Create Schedule Only Once Per Day !!! If SomeThing Went Wrong Please Update The Exist Schedule !!!',
-        }
+    return 201, schedule
 
 # -----------------------------------------------------------------------------
 
@@ -95,7 +110,7 @@ def retrieve_schedule_by_id(request, id: int):
     404: MessageOut,
     500: MessageOut
 })
-def retrieve_schedule_by_date(request, date: str):
+def retrieve_schedule_by_date(request, date: datetime.date):
     try:
         schedule = Schedule.objects.filter(created__icontains=date)
     except:

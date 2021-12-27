@@ -8,4 +8,4 @@ class About(models.Model):
     created = models.DateField(auto_now_add=True)
 
     def __str__(self):
-        return self.description
+        return f"{self.id} || {self.description}"
