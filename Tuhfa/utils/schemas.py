@@ -118,6 +118,7 @@ class UpdatePassword(Schema):
 
 # About Schemas
 class AboutOut(Schema):
+    id: int
     image: str = None
     description: str
     created: datetime.date

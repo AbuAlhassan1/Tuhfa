@@ -1,7 +1,8 @@
-from typing import List
+from typing import Any, List
 from django.shortcuts import render
-from ninja import Router
+from ninja import Router, Form
 from ninja.files import UploadedFile
+from ninja.params_functions import File
 from Tuhfa.utils.schemas import MessageOut, AboutOut
 from .models import About
 
@@ -50,23 +51,34 @@ def retrive_about_section(request):
 # ---------------------------------------------------------------
 
 # Update An About Section
-@about_controller.put("update-about-section", response={
-    200: AboutOut,
-    404: MessageOut
+@about_controller.post("update-about-section", response={
+    200: MessageOut,
+    404: MessageOut,
+    422: MessageOut
 })
-def update_about_section(request,description: str, id: int, image: UploadedFile):
-    # image = ImageForm(request.POST, request.FILES)
+def update_about_section(request, description: str, image: UploadedFile):
+    try:
+        about_section = About.objects.first()
+    except:
+        return {
+            'message': "There Is No About Section Yet !!!"
+        }
+    
+    if not about_section:
+        return {
+            'message': "There Is No About Section Yet !!!"
+        }
 
     try:
-        update_about_info = About.objects.filter(id=id).update(description=description, image=image)
+        about_section.description = description
+        about_section.image = image
+        about_section.save()
     except:
-        return {"message": "Somthing Went Wrong While Updating About Section !!!"}
-
-    if update_about_info:
-        about_info = About.objects.get(id=id)
-        return 200, about_info
-    else:
-        return {"message": "Somthing Went Wrong While Updating About Section !!!"}
+        return {
+            'message': "SomeThing Went Wrong !!"
+        }
     
-
+    return {
+        'message': "About Section Updated Successfully"
+    }
 # ---------------------------------------------------------------
