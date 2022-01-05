@@ -10,6 +10,12 @@ from ninja.files import UploadedFile
 categories_controller = Router(tags=['categories'])
 
 # ---------------------------------------------------------------
+# ---------------------------------------------------------------
+# ---------------------------------------------------------------
+# -------------------- CATEGORY ENDPOINTS -----------------------
+# ---------------------------------------------------------------
+# ---------------------------------------------------------------
+# ---------------------------------------------------------------
 
 # Create Category
 @categories_controller.post('create_category', response={
@@ -17,13 +23,11 @@ categories_controller = Router(tags=['categories'])
     500: MessageOut
 })
 def create_category(request, name:str, description: str, parent: int = None, image: UploadedFile = File(None)):
-    image.name = "ajshgdjashgd.png"
     try:
         categories = Category.objects.create(name=name, description=description, parent=parent, image=image)
     except:
         return 500, { 'message': 'Something Went Rong !! :(' }
 
-    print(str(image.size))
     return 201, categories
 
 # endpoint consumes file
@@ -52,7 +56,7 @@ def retrive_all_categories(request):
 # ---------------------------------------------------------------
 
 # Update Category By Id
-@categories_controller.put('update_category_by_id', response={
+@categories_controller.post('update_category_by_id', response={
     200: CategoryOut,
     500: MessageOut
 })
@@ -60,7 +64,7 @@ def update_category_by_id(request, id, input: CategoryIn, image: UploadedFile = 
     category = get_object_or_404(Category, id=id)
     category.name = input.name
     category.description = input.description
-    # category.image = image
+    category.image = image
     if category.id != input.parent:
         category.parent = input.parent
     else:
@@ -86,6 +90,10 @@ def delete_category_by_id(request, id):
 # ---------------------------------------------------------------
 # ---------------------------------------------------------------
 # ---------------------------------------------------------------
+# ---------------------- THEME ENDPOINTS ------------------------
+# ---------------------------------------------------------------
+# ---------------------------------------------------------------
+# ---------------------------------------------------------------
 
 
 # Create Theme
@@ -94,12 +102,16 @@ def delete_category_by_id(request, id):
     500: MessageOut,
     404: MessageOut
 })
-def create_theme(request, name: str, title: str,description: str, categoryId: int, date: datetime.datetime):
+def create_theme(request, name: str, title: str, description: str, categoryId: int, image: UploadedFile, date: datetime.date):
     try:
         category = get_object_or_404(Category, id=categoryId)
-        theme = Theme.objects.create(name=name, title=title,description=description, category=category, date=date)
     except:
-        return 500, { 'message': str(category) }
+        return 500, { 'message': 'Category Not Found !' }
+
+    try:
+        theme = Theme.objects.create(name=name, title=title, description=description, image=image, category=category, date=date)
+    except:
+        return 500, { 'message': 'Something Went Rong !! :(' }
 
     return 201, theme
 
@@ -130,8 +142,8 @@ def get_theme_by_id(request, id):
     200: List[ThemeOut],
     404: MessageOut
 })
-def get_themes_by_date(request, date: str):
-    themes = Theme.objects.filter(date__icontains=date)
+def get_themes_by_date(request, date: datetime.date):
+    themes = Theme.objects.filter(date=date)
     if not themes:
         return 404, { 'message': 'No Themes Found' }
     return themes

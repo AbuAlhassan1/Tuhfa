@@ -5,7 +5,9 @@ from categories.models import Category
 class Schedule(models.Model):
     day = models.TextField(max_length=10, null=True, blank=True, default="dayName")
     category = models.ForeignKey(Category, on_delete=models.DO_NOTHING, related_name="schedule_category", null=True, blank=True)
-    date = models.DateField(auto_now=False, auto_now_add=False)
+    date = models.DateField(auto_now=False, auto_now_add=False, null=True, blank=True, default=None)
+    start_time = models.TimeField(auto_now=False, auto_now_add=False, default="00:00:00")
+    end_time = models.TimeField(auto_now=False, auto_now_add=False, default="00:00:00")
 
     created = models.DateField(auto_now_add=True, auto_now=False)
     updated = models.DateTimeField(auto_now_add=False, auto_now=True)

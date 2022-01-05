@@ -15,13 +15,6 @@ class CategoryIn(Schema):
     description: str
     parent: int = None
 
-
-# class CategorySchema(Schema):
-#     name: str
-#     description: str
-#     image: str = None
-#     # parent: int = None
-
 class CategoryOut(Schema):
     id: int
     name: str
@@ -48,7 +41,7 @@ class ThemeOut(Schema):
     title: str
     description: str
     image: str = None
-    date: datetime.datetime
+    date: datetime.date
     category: ThemeCategorySchema = None
 
 class ThemeSchema(Schema):
@@ -135,6 +128,9 @@ class ScheduleOut(Schema):
     id: int
     day: str
     category: ScheduleCategorySchema
+    start_time: datetime.time
+    end_time: datetime.time
+
     created: datetime.date
     updated: datetime.datetime
 

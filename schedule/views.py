@@ -22,6 +22,8 @@ schedule_controller = Router(tags=['schedule'])
 def create_schedule(request,
     day: str = None,
     date: datetime.date = None,
+    start_time: datetime.time = None,
+    end_time: datetime.time = None,
     category_id: int = None,
     category_name: str = None,
 ):
@@ -52,14 +54,14 @@ def create_schedule(request,
 
     if category_id and not category_name:
         try:
-            schedule = Schedule.objects.create(day=day, date=date, category=get_category_by_id)
+            schedule = Schedule.objects.create(day=day, date=date, category=get_category_by_id, start_time=start_time, end_time=end_time)
         except:
             return {
                 'message': 'Somthing Went Wrong',
             }
     if category_name and not category_id:
         try:
-            schedule = Schedule.objects.create(day=day, date=date, category=get_category_by_name[0])
+            schedule = Schedule.objects.create(day=day, date=date, category=get_category_by_name[0], start_time=start_time, end_time=end_time)
         except:
             return {
                 'message': 'Somthing Went Wrong !!!',
@@ -112,7 +114,43 @@ def retrieve_schedule_by_id(request, id: int):
 })
 def retrieve_schedule_by_date(request, date: datetime.date):
     try:
-        schedule = Schedule.objects.filter(created__icontains=date)
+        schedule = Schedule.objects.filter(date=date)
+    except:
+        return {
+            'message': 'No Such A Schedule !!!',
+        }
+
+    return 200, schedule
+
+# -----------------------------------------------------------------------------
+
+# Retrieve Schedule[s] By Start Time
+@schedule_controller.get('retrieve_schedule_by_start_time', response={
+    200: List[ScheduleOut],
+    404: MessageOut,
+    500: MessageOut
+})
+def retrieve_schedule_by_start_time(request, start_time: datetime.time):
+    try:
+        schedule = Schedule.objects.filter(start_time=start_time)
+    except:
+        return {
+            'message': 'No Such A Schedule !!!',
+        }
+
+    return 200, schedule
+
+# -----------------------------------------------------------------------------
+
+# Retrieve Schedule[s] By End Time
+@schedule_controller.get('retrieve_schedule_by_end_time', response={
+    200: List[ScheduleOut],
+    404: MessageOut,
+    500: MessageOut
+})
+def retrieve_schedule_by_end_time(request, end_time: datetime.time):
+    try:
+        schedule = Schedule.objects.filter(end_time=end_time)
     except:
         return {
             'message': 'No Such A Schedule !!!',
@@ -128,14 +166,13 @@ def retrieve_schedule_by_date(request, date: datetime.date):
     404: MessageOut,
     500: MessageOut
 })
-def update_schedule(request, id: int,
-    Sunday: str = None,
-    Monday: str = None,
-    Tuesday: str = None,
-    Wednesday: str = None,
-    Thursday: str = None,
-    Friday: str = None,
-    Saturday: str = None
+def update_schedule(request, 
+    id: int,
+    category_id: int = None,
+    day: str = None,
+    date: datetime.date = None,
+    start_time: datetime.time = None,
+    end_time: datetime.time = None,
 ):
     try:
         schedule = Schedule.objects.get(id=id)
@@ -143,14 +180,19 @@ def update_schedule(request, id: int,
         return {
             'message': 'Somthing Went Wrong !!!',
         }
+    
+    try:
+        get_categroy = Category.objects.get(id=category_id)
+    except:
+        return {
+            'message': 'Category Not Found !!!',
+        }
 
-    schedule.Sunday = request.Sunday
-    schedule.Monday = request.Monday
-    schedule.Tuesday = request.Tuesday
-    schedule.Wednesday = request.Wednesday
-    schedule.Thursday = request.Thursday
-    schedule.Friday = request.Friday
-    schedule.Saturday = request.Saturday
+    schedule.day = day
+    schedule.date = date
+    schedule.start_time = start_time
+    schedule.end_time = end_time
+    schedule.category = get_categroy
 
     schedule.save()
 
@@ -159,42 +201,41 @@ def update_schedule(request, id: int,
 # -----------------------------------------------------------------------------
 
 # Update Schedule by Date
-@schedule_controller.put('update_by_date', response={
-    200: ScheduleOut,
-    404: MessageOut,
-    500: MessageOut
-})
-def update_schedule_by_date(request,date: str,
-    Sunday: str = None,
-    Monday: str = None,
-    Tuesday: str = None,
-    Wednesday: str = None,
-    Thursday: str = None,
-    Friday: str = None,
-    Saturday: str = None
-):
-    try:
-        schedule = Schedule.objects.filter(created__icontains=date)
-    except:
-        return {
-            'message': 'Somthing Went Wrong !!!',
-        }
+# @schedule_controller.put('update_by_id', response={
+#     200: ScheduleOut,
+#     404: MessageOut,
+#     500: MessageOut
+# })
+# def update_schedule(request, 
+#     date: datetime.date,
+#     category_id: int = None,
+#     day: str = None,
+#     new_date: datetime.date = None,
+#     start_time: datetime.time = None,
+#     end_time: datetime.time = None,
+# ):
+#     try:
+#         schedule = Schedule.objects.filter(date=date)
+#     except:
+#         return {
+#             'message': 'Somthing Went Wrong !!!',
+#         }
+    
+#     try:
+#         get_categroy = Category.objects.get(id=category_id)
+#     except:
+#         return {
+#             'message': 'Category Not Found !!!',
+#         }
 
-    if len(schedule) > 1:
-        return {
-            'message': 'Thir is more than one schedule !!!',
-        }
+#     schedule.day = day
+#     schedule.date = date
+#     schedule.start_time = start_time
+#     schedule.end_time = end_time
+#     schedule.category = get_categroy
 
-    schedule.Sunday = request.Sunday
-    schedule.Monday = request.Monday
-    schedule.Tuesday = request.Tuesday
-    schedule.Wednesday = request.Wednesday
-    schedule.Thursday = request.Thursday
-    schedule.Friday = request.Friday
-    schedule.Saturday = request.Saturday
+#     schedule.save()
 
-    schedule.save()
-
-    return 200, schedule
+#     return 200, schedule
 
 # -----------------------------------------------------------------------------
